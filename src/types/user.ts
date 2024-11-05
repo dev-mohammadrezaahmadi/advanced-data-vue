@@ -5,3 +5,5 @@ export interface User {
   address: string
   phone: string
 }
+
+export type Column = keyof User
