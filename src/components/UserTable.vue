@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th>User ID</th>
-        <th>Name of the User</th>
+        <th @click="onNameColumnClick">Name of the User {{ sortType === 'asc' ? '↑' : '↓' }}</th>
         <th @click="onDateColumnClick">
           Date of Registration {{ sortType === 'asc' ? '↑' : '↓' }}
         </th>
@@ -44,11 +44,19 @@ function sortBy(column: Column) {
       const dateB = new Date(b.date).getTime()
       return sortType.value === 'asc' ? dateA - dateB : dateB - dateA
     })
+  } else if (column === 'name') {
+    sortedUsers.value = [...users.value].sort((a, b) => {
+      return a.name.localeCompare(b.name) * (sortType.value === 'asc' ? 1 : -1)
+    })
   }
 }
 
 function onDateColumnClick() {
   toggleSort()
   sortBy('date')
+}
+function onNameColumnClick() {
+  toggleSort()
+  sortBy('name')
 }
 </script>
