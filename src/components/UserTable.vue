@@ -2,11 +2,13 @@
   <table>
     <thead>
       <tr>
-        <th v-for="column in columns" :key="column.key">{{ column.label }}</th>
+        <th v-for="column in columns" :key="column.key" @click="sortBy(column.key as Column)">
+          {{ column.label }}
+        </th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="user in users" :key="user.id">
+      <tr v-for="user in sortedUsers" :key="user.id">
         <td>{{ user.id }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.date }}</td>
@@ -19,10 +21,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { User } from '@/types/user'
+import type { User, Column } from '@/types/user'
 import usersData from '@/data/records.json'
 
 const users = ref<User[]>([...usersData])
+const sortedUsers = ref<User[]>([...users.value])
 
 const columns = reactive([
   {
@@ -46,4 +49,12 @@ const columns = reactive([
     label: 'Phone Number',
   },
 ])
+
+function sortBy(column: Column) {
+  if (column === 'date') {
+    sortedUsers.value = [...users.value].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    )
+  }
+}
 </script>
