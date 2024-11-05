@@ -2,9 +2,13 @@
   <table>
     <thead>
       <tr>
-        <th v-for="column in columns" :key="column.key" @click="sortBy(column.key as Column)">
-          {{ column.label }}
+        <th>User ID</th>
+        <th>Name of the User</th>
+        <th @click="onDateColumnClick">
+          Date of Registration {{ sortType === 'asc' ? '↑' : '↓' }}
         </th>
+        <th>Address</th>
+        <th>Phone Number</th>
       </tr>
     </thead>
     <tbody>
@@ -20,41 +24,31 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import type { User, Column } from '@/types/user'
+import { ref } from 'vue'
+import type { User } from '@/types/user'
+import type { Column, Sort } from '@/types/type'
 import usersData from '@/data/records.json'
 
 const users = ref<User[]>([...usersData])
 const sortedUsers = ref<User[]>([...users.value])
+const sortType = ref<Sort>('asc')
 
-const columns = reactive([
-  {
-    key: 'id',
-    label: 'User ID',
-  },
-  {
-    key: 'name',
-    label: 'Name of the User',
-  },
-  {
-    key: 'date',
-    label: 'Date of Registration',
-  },
-  {
-    key: 'address',
-    label: 'Address',
-  },
-  {
-    key: 'phone',
-    label: 'Phone Number',
-  },
-])
+function toggleSort() {
+  sortType.value = sortType.value === 'asc' ? 'desc' : 'asc'
+}
 
 function sortBy(column: Column) {
   if (column === 'date') {
-    sortedUsers.value = [...users.value].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    )
+    sortedUsers.value = [...users.value].sort((a, b) => {
+      const dateA = new Date(a.date).getTime()
+      const dateB = new Date(b.date).getTime()
+      return sortType.value === 'asc' ? dateA - dateB : dateB - dateA
+    })
   }
+}
+
+function onDateColumnClick() {
+  toggleSort()
+  sortBy('date')
 }
 </script>
