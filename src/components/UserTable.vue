@@ -18,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="user in users" :key="user.id">
+      <tr v-for="user in paginatedUsers" :key="user.id">
         <td>{{ user.id }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.date }}</td>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { ref, computed } from 'vue'
 import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
 
@@ -48,6 +48,7 @@ const users = ref<User[]>([...usersData])
 
 const { columnsSortDirection, toggleSort } = useToggleColumnSort()
 
+// sorting
 const nameColumnSortDirectionIndicator = computed(() => {
   if (columnsSortDirection.value.name === 'asc') {
     return '↑'
@@ -70,17 +71,21 @@ const dateColumnSortDirectionIndicator = computed(() => {
 
 const sortedUsers = computed(() => {
   if (columnsSortDirection.value.name !== 'idle' && columnsSortDirection.value.date !== 'idle') {
-    return [...users.value].sort((a, b) => {
+    return [...filteredUsers.value].sort((a, b) => {
       const nameComparison = sortByName(a, b, columnsSortDirection.value.name)
       const dateComparison = sortByDate(a, b, columnsSortDirection.value.date)
       return nameComparison !== 0 ? nameComparison : dateComparison
     })
   } else if (columnsSortDirection.value.name !== 'idle') {
-    return [...users.value].sort((a, b) => sortByName(a, b, columnsSortDirection.value.name))
+    return [...filteredUsers.value].sort((a, b) =>
+      sortByName(a, b, columnsSortDirection.value.name),
+    )
   } else if (columnsSortDirection.value.date !== 'idle') {
-    return [...users.value].sort((a, b) => sortByDate(a, b, columnsSortDirection.value.date))
+    return [...filteredUsers.value].sort((a, b) =>
+      sortByDate(a, b, columnsSortDirection.value.date),
+    )
   } else {
-    return [...users.value]
+    return [...filteredUsers.value]
   }
 })
 
@@ -97,6 +102,8 @@ const filteredUsers = computed(() => {
       user.address.toLowerCase().includes(addressFilter.value.toLowerCase()),
   )
 })
+
+// paginating
 
 const selectedPageEntries = ref(10)
 const pageEntriesOptions = ref([
@@ -124,12 +131,12 @@ const pageEntriesOptions = ref([
 
 const currentPage = ref(1)
 const totalPages = computed(() => {
-  return Math.ceil(users.value.length / selectedPageEntries.value)
+  return Math.ceil(sortedUsers.value.length / selectedPageEntries.value)
 })
 const paginatedUsers = computed(() => {
   const startIndex = (currentPage.value - 1) * selectedPageEntries.value
   const endIndex = startIndex + selectedPageEntries.value
-  return users.value.slice(startIndex, endIndex)
+  return sortedUsers.value.slice(startIndex, endIndex)
 })
 
 const setPage = (page: number) => {
