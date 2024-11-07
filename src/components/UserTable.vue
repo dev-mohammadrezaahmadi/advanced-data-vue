@@ -1,4 +1,12 @@
 <template>
+  <div>
+    <div>page entriess: {{ selectedPageEntries }}</div>
+    <select v-model="selectedPageEntries">
+      <option v-for="option in pageEntriesOptions" :key="option.value" :value="option.value">
+        {{ option.text }}
+      </option>
+    </select>
+  </div>
   <table>
     <thead>
       <tr>
@@ -35,6 +43,30 @@ import usersData from '@/data/records.json'
 
 const users = ref<User[]>([...usersData])
 
+const selectedPageEntries = ref(10)
+const pageEntriesOptions = ref([
+  {
+    text: '5',
+    value: 5,
+  },
+  {
+    text: '10',
+    value: 10,
+  },
+  {
+    text: '15',
+    value: 15,
+  },
+  {
+    text: '20',
+    value: 20,
+  },
+  {
+    text: '50',
+    value: 50,
+  },
+])
+
 const columns = reactive([
   {
     key: 'id',
@@ -58,14 +90,13 @@ const columns = reactive([
   },
 ])
 
-const PAGE_SIZE = 10
 const currentPage = ref(1)
 const totalPages = computed(() => {
-  return Math.ceil(users.value.length / PAGE_SIZE)
+  return Math.ceil(users.value.length / selectedPageEntries.value)
 })
 const paginatedUsers = computed(() => {
-  const startIndex = (currentPage.value - 1) * PAGE_SIZE
-  const endIndex = startIndex + PAGE_SIZE
+  const startIndex = (currentPage.value - 1) * selectedPageEntries.value
+  const endIndex = startIndex + selectedPageEntries.value
   return users.value.slice(startIndex, endIndex)
 })
 
