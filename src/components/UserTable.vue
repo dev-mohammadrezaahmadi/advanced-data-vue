@@ -1,7 +1,9 @@
 <template>
-  <p>
-    {{ JSON.stringify(columnsSortDirection) }}
-  </p>
+  <div>
+    <input type="text" placeholder="search name .." v-model="nameFilter" />
+    <input type="text" placeholder="search phone .." v-model="phoneFilter" />
+    <input type="text" placeholder="search address .." v-model="addressFilter" />
+  </div>
   <table>
     <thead>
       <tr>
@@ -15,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="user in sortedUsers" :key="user.id">
+      <tr v-for="user in users" :key="user.id">
         <td>{{ user.id }}</td>
         <td>{{ user.name }}</td>
         <td>{{ user.date }}</td>
@@ -27,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import type { User } from '@/types/user'
 import { sortByDate, sortByName } from '@/helpers'
 import usersData from '@/data/records.json'
@@ -71,5 +73,19 @@ const sortedUsers = computed(() => {
   } else {
     return [...users.value]
   }
+})
+
+// filters
+const nameFilter = ref('')
+const phoneFilter = ref('')
+const addressFilter = ref('')
+
+const filteredUsers = computed(() => {
+  return users.value.filter(
+    (user) =>
+      user.name.toLowerCase().includes(nameFilter.value.toLowerCase()) &&
+      user.phone.toLowerCase().includes(phoneFilter.value.toLowerCase()) &&
+      user.address.toLowerCase().includes(addressFilter.value.toLowerCase()),
+  )
 })
 </script>
