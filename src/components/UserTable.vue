@@ -1,8 +1,5 @@
 <template>
   <p>
-    {{ JSON.stringify(columnsClickCounter) }}
-  </p>
-  <p>
     {{ JSON.stringify(columnsSortDirection) }}
   </p>
   <table>
@@ -32,26 +29,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { User } from '@/types/user'
-import type { Column, Sort } from '@/types/type'
 import { sortByDate, sortByName } from '@/helpers'
 import usersData from '@/data/records.json'
+import { useToggleColumnSort } from '@/composables/useToggleColumnSort'
 
 const users = ref<User[]>([...usersData])
-const columnsSortDirection = ref<Record<Column, Sort>>({
-  name: 'idle',
-  date: 'idle',
-  address: 'idle',
-  id: 'idle',
-  phone: 'idle',
-})
 
-const columnsClickCounter = ref<Record<Column, number>>({
-  name: 0,
-  date: 0,
-  address: 0,
-  id: 0,
-  phone: 0,
-})
+const { columnsSortDirection, toggleSort } = useToggleColumnSort()
 
 const nameColumnSortDirectionIndicator = computed(() => {
   if (columnsSortDirection.value.name === 'asc') {
@@ -72,15 +56,6 @@ const dateColumnSortDirectionIndicator = computed(() => {
     return null
   }
 })
-
-function toggleSort(column: Column) {
-  columnsClickCounter.value[column]++
-  if (columnsClickCounter.value[column] % 3 === 0) {
-    columnsSortDirection.value[column] = 'idle'
-    return
-  }
-  columnsSortDirection.value[column] = columnsSortDirection.value[column] === 'asc' ? 'desc' : 'asc'
-}
 
 const sortedUsers = computed(() => {
   if (columnsSortDirection.value.name !== 'idle' && columnsSortDirection.value.date !== 'idle') {
