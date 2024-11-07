@@ -1,11 +1,17 @@
 <template>
+  <p>
+    {{ JSON.stringify(columnsClickCounter) }}
+  </p>
+  <p>
+    {{ JSON.stringify(columnsSortDirection) }}
+  </p>
   <table>
     <thead>
-      <tr>
+      <tr style="border: 1px solid red">
         <th>User ID</th>
-        <th @click="onNameColumnClick">Name of the User {{ sortType === 'asc' ? '↑' : '↓' }}</th>
-        <th @click="onDateColumnClick">
-          Date of Registration {{ sortType === 'asc' ? '↑' : '↓' }}
+        <th @click="toggleSort('name')">Name of the User {{ nameColumnSortDirectionIndicator }}</th>
+        <th @click="toggleSort('date')">
+          Date of Registration {{ dateColumnSortDirectionIndicator }}
         </th>
         <th>Address</th>
         <th>Phone Number</th>
@@ -24,39 +30,81 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { User } from '@/types/user'
 import type { Column, Sort } from '@/types/type'
+import { sortByDate, sortByName } from '@/helpers'
 import usersData from '@/data/records.json'
 
 const users = ref<User[]>([...usersData])
-const sortedUsers = ref<User[]>([...users.value])
-const sortType = ref<Sort>('asc')
+const columnsSortDirection = ref<Record<Column, Sort>>({
+  name: 'idle',
+  date: 'idle',
+  address: 'idle',
+  id: 'idle',
+  phone: 'idle',
+})
 
-function toggleSort() {
-  sortType.value = sortType.value === 'asc' ? 'desc' : 'asc'
-}
+const columnsClickCounter = ref<Record<Column, number>>({
+  name: 0,
+  date: 0,
+  address: 0,
+  id: 0,
+  phone: 0,
+})
 
-function sortBy(column: Column) {
-  if (column === 'date') {
-    sortedUsers.value = [...users.value].sort((a, b) => {
-      const dateA = new Date(a.date).getTime()
-      const dateB = new Date(b.date).getTime()
-      return sortType.value === 'asc' ? dateA - dateB : dateB - dateA
-    })
-  } else if (column === 'name') {
-    sortedUsers.value = [...users.value].sort((a, b) => {
-      return a.name.localeCompare(b.name) * (sortType.value === 'asc' ? 1 : -1)
-    })
+const nameColumnSortDirectionIndicator = computed(() => {
+  if (columnsSortDirection.value.name === 'asc') {
+    return '↑'
+  } else if (columnsSortDirection.value.name === 'desc') {
+    return '↓'
+  } else {
+    return null
   }
+})
+
+const dateColumnSortDirectionIndicator = computed(() => {
+  if (columnsSortDirection.value.date === 'asc') {
+    return '↑'
+  } else if (columnsSortDirection.value.date === 'desc') {
+    return '↓'
+  } else {
+    return null
+  }
+})
+
+function toggleSort(column: Column) {
+  columnsClickCounter.value[column]++
+  if (columnsClickCounter.value[column] % 3 === 0) {
+    columnsSortDirection.value[column] = 'idle'
+    return
+  }
+  columnsSortDirection.value[column] = columnsSortDirection.value[column] === 'asc' ? 'desc' : 'asc'
 }
 
-function onDateColumnClick() {
-  toggleSort()
-  sortBy('date')
-}
-function onNameColumnClick() {
-  toggleSort()
-  sortBy('name')
-}
+const sortedUsers = computed(() => {
+  if (columnsSortDirection.value.name !== 'idle' && columnsSortDirection.value.date !== 'idle') {
+    return [...users.value].sort((a, b) => {
+      const nameComparison = sortByName(a, b, columnsSortDirection.value.name)
+      const dateComparison = sortByDate(a, b, columnsSortDirection.value.date)
+      return nameComparison !== 0 ? nameComparison : dateComparison
+    })
+  } else if (columnsSortDirection.value.name !== 'idle') {
+    return [...users.value].sort((a, b) => sortByName(a, b, columnsSortDirection.value.name))
+  } else if (columnsSortDirection.value.date !== 'idle') {
+    return [...users.value].sort((a, b) => sortByDate(a, b, columnsSortDirection.value.date))
+  } else {
+    return [...users.value]
+  }
+})
 </script>
+
+<style scoped lang="css">
+.sticky {
+  border: 1px solid red;
+}
+
+thead {
+  border: 1px solid black !important;
+}
+</style>
