@@ -4,6 +4,7 @@
     <input type="text" placeholder="search phone .." v-model="phoneFilter" />
     <input type="text" placeholder="search address .." v-model="addressFilter" />
   </div>
+  <PageEntriesSelect :options="pageEntriesOptions" v-model="selectedPageEntries" />
   <table>
     <thead>
       <tr>
@@ -26,10 +27,18 @@
       </tr>
     </tbody>
   </table>
+  <PaginationNavigator
+    :current-page="currentPage"
+    :total-pages="totalPages"
+    @on-paginate-click="setPage"
+  />
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
+import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
+import PaginationNavigator from '@/components/PaginationNavigator.vue'
+
 import type { User } from '@/types/user'
 import { sortByDate, sortByName } from '@/helpers'
 import usersData from '@/data/records.json'
@@ -88,4 +97,42 @@ const filteredUsers = computed(() => {
       user.address.toLowerCase().includes(addressFilter.value.toLowerCase()),
   )
 })
+
+const selectedPageEntries = ref(10)
+const pageEntriesOptions = ref([
+  {
+    text: '5',
+    value: 5,
+  },
+  {
+    text: '10',
+    value: 10,
+  },
+  {
+    text: '15',
+    value: 15,
+  },
+  {
+    text: '20',
+    value: 20,
+  },
+  {
+    text: '50',
+    value: 50,
+  },
+])
+
+const currentPage = ref(1)
+const totalPages = computed(() => {
+  return Math.ceil(users.value.length / selectedPageEntries.value)
+})
+const paginatedUsers = computed(() => {
+  const startIndex = (currentPage.value - 1) * selectedPageEntries.value
+  const endIndex = startIndex + selectedPageEntries.value
+  return users.value.slice(startIndex, endIndex)
+})
+
+const setPage = (page: number) => {
+  currentPage.value = page
+}
 </script>
