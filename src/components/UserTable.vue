@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onBeforeMount } from 'vue'
 import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
 
@@ -43,8 +43,11 @@ import type { User } from '@/types/user'
 import { sortByDate, sortByName } from '@/helpers'
 import usersData from '@/data/records.json'
 import { useToggleColumnSort } from '@/composables/useToggleColumnSort'
+import { useRouter, useRoute } from 'vue-router'
 
 const users = ref<User[]>([...usersData])
+const router = useRouter()
+const route = useRoute()
 
 const { columnsSortDirection, toggleSort } = useToggleColumnSort()
 
@@ -142,4 +145,52 @@ const paginatedUsers = computed(() => {
 const setPage = (page: number) => {
   currentPage.value = page
 }
+
+// url update
+function updateURL() {
+  router.push({
+    path: '',
+    query: {
+      ...route.query,
+      name: nameFilter.value,
+      phone: phoneFilter.value,
+      address: addressFilter.value,
+      page: currentPage.value,
+      pageCount: selectedPageEntries.value,
+      sort: JSON.stringify(columnsSortDirection.value),
+    },
+  })
+  console.log(columnsSortDirection.value)
+}
+
+// queries
+// sortBy, sortDir, name, address, phone, pageNumber, pageCount
+
+watch(
+  [
+    nameFilter,
+    phoneFilter,
+    addressFilter,
+    currentPage,
+    selectedPageEntries,
+    () => columnsSortDirection.value.name,
+    () => columnsSortDirection.value.date,
+  ],
+  updateURL,
+)
+
+function setupQueryValues() {
+  nameFilter.value = (route.query.name as string) ?? ''
+  phoneFilter.value = (route.query.phone as string) ?? ''
+  addressFilter.value = (route.query.address as string) ?? ''
+  currentPage.value = Number((route.query.page as string) ?? 1)
+  selectedPageEntries.value = Number((route.query.pageCount as string) ?? 10)
+  columnsSortDirection.value = JSON.parse(
+    (route.query.sort as string) ?? columnsSortDirection.value,
+  )
+}
+onBeforeMount(async () => {
+  await router.isReady()
+  setupQueryValues()
+})
 </script>
