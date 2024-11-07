@@ -1,12 +1,5 @@
 <template>
-  <div>
-    <div>page entriess: {{ selectedPageEntries }}</div>
-    <select v-model="selectedPageEntries">
-      <option v-for="option in pageEntriesOptions" :key="option.value" :value="option.value">
-        {{ option.text }}
-      </option>
-    </select>
-  </div>
+  <PageEntriesSelect :options="pageEntriesOptions" v-model="selectedPageEntries" />
   <table>
     <thead>
       <tr>
@@ -23,25 +16,45 @@
       </tr>
     </tbody>
   </table>
-  <div>
-    <button
-      v-for="page in totalPages"
-      :key="page"
-      :color="currentPage === page ? 'primary' : 'secondary'"
-      size="sm"
-      @click="setPage(page)"
-    >
-      {{ page }}
-    </button>
-  </div>
+  <PaginationNavigator
+    :current-page="currentPage"
+    :total-pages="totalPages"
+    @on-paginate-click="setPage"
+  />
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue'
+import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
+import PaginationNavigator from '@/components/PaginationNavigator.vue'
+
 import type { User } from '@/types/user'
 import usersData from '@/data/records.json'
 
 const users = ref<User[]>([...usersData])
+
+const columns = reactive([
+  {
+    key: 'id',
+    label: 'User ID',
+  },
+  {
+    key: 'name',
+    label: 'Name of the User',
+  },
+  {
+    key: 'date',
+    label: 'Date of Registration',
+  },
+  {
+    key: 'address',
+    label: 'Address',
+  },
+  {
+    key: 'phone',
+    label: 'Phone Number',
+  },
+])
 
 const selectedPageEntries = ref(10)
 const pageEntriesOptions = ref([
@@ -64,29 +77,6 @@ const pageEntriesOptions = ref([
   {
     text: '50',
     value: 50,
-  },
-])
-
-const columns = reactive([
-  {
-    key: 'id',
-    label: 'User ID',
-  },
-  {
-    key: 'name',
-    label: 'Name of the User',
-  },
-  {
-    key: 'date',
-    label: 'Date of Registration',
-  },
-  {
-    key: 'address',
-    label: 'Address',
-  },
-  {
-    key: 'phone',
-    label: 'Phone Number',
   },
 ])
 
