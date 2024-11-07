@@ -7,7 +7,7 @@
   </p>
   <table>
     <thead>
-      <tr style="border: 1px solid red">
+      <tr>
         <th>User ID</th>
         <th @click="toggleSort('name')">Name of the User {{ nameColumnSortDirectionIndicator }}</th>
         <th @click="toggleSort('date')">
@@ -98,13 +98,3 @@ const sortedUsers = computed(() => {
   }
 })
 </script>
-
-<style scoped lang="css">
-.sticky {
-  border: 1px solid red;
-}
-
-thead {
-  border: 1px solid black !important;
-}
-</style>
