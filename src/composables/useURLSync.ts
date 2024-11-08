@@ -1,12 +1,10 @@
 import { watch, onMounted, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { PAGE_ENTERIES_COUNT } from '@/constants/defaults'
-import type { Column, Sort } from '@/types/type'
+import type { Column, Filters, Sort } from '@/types/type'
 
 export const useURLSync = (
-  nameFilter: Ref<string>,
-  phoneFilter: Ref<string>,
-  addressFilter: Ref<string>,
+  filters: Ref<Filters>,
   currentPage: Ref<number>,
   selectedPageEntries: Ref<number>,
   columnsSortDirection: Ref<Record<Column, Sort>>,
@@ -19,9 +17,9 @@ export const useURLSync = (
       path: '',
       query: {
         ...route.query,
-        name: nameFilter.value,
-        phone: phoneFilter.value,
-        address: addressFilter.value,
+        name: filters.value.name,
+        phone: filters.value.phone,
+        address: filters.value.address,
         page: currentPage.value,
         pageCount: selectedPageEntries.value,
         sort: JSON.stringify(columnsSortDirection.value),
@@ -30,9 +28,9 @@ export const useURLSync = (
   }
 
   function initializeDefaultValuesFromURLQueries() {
-    nameFilter.value = (route.query.name as string) ?? ''
-    phoneFilter.value = (route.query.phone as string) ?? ''
-    addressFilter.value = (route.query.address as string) ?? ''
+    filters.value.name = (route.query.name as string) ?? ''
+    filters.value.phone = (route.query.phone as string) ?? ''
+    filters.value.address = (route.query.address as string) ?? ''
     currentPage.value = Number((route.query.page as string) ?? 1)
     selectedPageEntries.value = Number((route.query.pageCount as string) ?? PAGE_ENTERIES_COUNT)
     columnsSortDirection.value = JSON.parse(
@@ -42,11 +40,11 @@ export const useURLSync = (
 
   watch(
     [
-      nameFilter,
-      phoneFilter,
-      addressFilter,
       currentPage,
       selectedPageEntries,
+      () => filters.value.name,
+      () => filters.value.phone,
+      () => filters.value.address,
       () => columnsSortDirection.value.name,
       () => columnsSortDirection.value.date,
     ],

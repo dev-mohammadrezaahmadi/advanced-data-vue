@@ -42,7 +42,7 @@ import FilterInputs from '@/components/FilterInputs.vue'
 
 import type { User } from '@/types/user'
 import usersData from '@/data/records.json'
-// import { useURLSync } from '@/composables/useURLSync'
+import { useURLSync } from '@/composables/useURLSync'
 import { useFilter } from '@/composables/useFilter'
 import { usePaginate } from '@/composables/usePaginate'
 import { useSort } from '@/composables/useSort'
@@ -50,13 +50,12 @@ import type { Filters } from '@/types/type'
 
 const users = ref<User[]>([...usersData])
 
+// filters
 const filters = ref<Filters>({
   name: '',
   phone: '',
   address: '',
 })
-
-// filters
 const { filteredUsers } = useFilter(users, filters)
 
 // sorting
@@ -64,6 +63,7 @@ const {
   sortedUsers,
   dateColumnSortDirectionIndicator,
   nameColumnSortDirectionIndicator,
+  columnsSortDirection,
   toggleSort,
 } = useSort(filteredUsers)
 
@@ -78,12 +78,5 @@ const {
 } = usePaginate(sortedUsers)
 
 // url updates
-// useURLSync(
-//   nameFilter,
-//   phoneFilter,
-//   addressFilter,
-//   currentPage,
-//   selectedPageEntries,
-//   columnsSortDirection,
-// )
+useURLSync(filters, currentPage, selectedPageEntries, columnsSortDirection)
 </script>
