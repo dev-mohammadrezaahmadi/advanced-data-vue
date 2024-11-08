@@ -1,13 +1,13 @@
 import { watch, onMounted, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { PAGE_ENTERIES_COUNT } from '@/constants/defaults'
-import type { Column, Filters, Sort } from '@/types/type'
+import type { Filters, Sort } from '@/types/type'
 
 export const useURLSync = (
   filters: Ref<Filters>,
   currentPage: Ref<number>,
   selectedPageEntries: Ref<number>,
-  columnsSortDirection: Ref<Record<Column, Sort>>,
+  columnsSortDirection: Ref<Sort>,
 ) => {
   const route = useRoute()
   const router = useRouter()

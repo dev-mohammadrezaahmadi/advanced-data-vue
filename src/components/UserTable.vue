@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
 import FilterInputs from '@/components/FilterInputs.vue'
@@ -47,6 +47,7 @@ import { useFilter } from '@/composables/useFilter'
 import { usePaginate } from '@/composables/usePaginate'
 import { useSort } from '@/composables/useSort'
 import type { Filters } from '@/types/type'
+import { useToggleColumnSort } from '@/composables/useToggleColumnSort'
 
 const users = ref<User[]>([...usersData])
 
@@ -59,13 +60,33 @@ const filters = ref<Filters>({
 const { filteredUsers } = useFilter(users, filters)
 
 // sorting
-const {
-  sortedUsers,
-  dateColumnSortDirectionIndicator,
-  nameColumnSortDirectionIndicator,
-  columnsSortDirection,
-  toggleSort,
-} = useSort(filteredUsers)
+// dateColumnSortDirectionIndicator,
+// nameColumnSortDirectionIndicator,
+// columnsSortDirection,
+// toggleSort,
+
+const { columnsSortDirection, toggleSort } = useToggleColumnSort()
+
+const nameColumnSortDirectionIndicator = computed(() => {
+  if (columnsSortDirection.value.name === 'asc') {
+    return '↑'
+  } else if (columnsSortDirection.value.name === 'desc') {
+    return '↓'
+  } else {
+    return null
+  }
+})
+
+const dateColumnSortDirectionIndicator = computed(() => {
+  if (columnsSortDirection.value.date === 'asc') {
+    return '↑'
+  } else if (columnsSortDirection.value.date === 'desc') {
+    return '↓'
+  } else {
+    return null
+  }
+})
+const { sortedUsers } = useSort(filteredUsers, columnsSortDirection)
 
 // paginating
 const {

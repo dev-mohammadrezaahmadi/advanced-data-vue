@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import type { Column, Sort } from '@/types/type'
 
 export function useToggleColumnSort() {
-  const columnsSortDirection = ref<Record<Column, Sort>>({
+  const columnsSortDirection = ref<Sort>({
     name: 'idle',
     date: 'idle',
     address: 'idle',
