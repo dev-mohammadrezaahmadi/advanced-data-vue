@@ -1,25 +1,18 @@
 import type { User } from '@/types/user'
-import { ref, computed, type Ref } from 'vue'
+import type { Filters } from '@/types/type'
+import { computed, type Ref } from 'vue'
 
-export function useFilter(users: Ref<User[]>) {
-  // filters
-  const nameFilter = ref('')
-  const phoneFilter = ref('')
-  const addressFilter = ref('')
-
+export function useFilter(users: Ref<User[]>, filters: Ref<Filters>) {
   const filteredUsers = computed(() => {
     return users.value.filter(
       (user) =>
-        user.name.toLowerCase().includes(nameFilter.value.toLowerCase()) &&
-        user.phone.toLowerCase().includes(phoneFilter.value.toLowerCase()) &&
-        user.address.toLowerCase().includes(addressFilter.value.toLowerCase()),
+        user.name.toLowerCase().includes(filters.value.name.toLowerCase()) &&
+        user.phone.toLowerCase().includes(filters.value.phone.toLowerCase()) &&
+        user.address.toLowerCase().includes(filters.value.address.toLowerCase()),
     )
   })
 
   return {
-    nameFilter,
-    phoneFilter,
-    addressFilter,
     filteredUsers,
   }
 }

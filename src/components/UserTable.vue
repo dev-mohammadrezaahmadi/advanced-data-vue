@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <input type="text" placeholder="search name .." v-model="nameFilter" />
-    <input type="text" placeholder="search phone .." v-model="phoneFilter" />
-    <input type="text" placeholder="search address .." v-model="addressFilter" />
-  </div>
+  <FilterInputs
+    v-model:name="filters.name"
+    v-model:address="filters.address"
+    v-model:phone="filters.phone"
+  />
   <PageEntriesSelect :options="pageEntriesOptions" v-model="selectedPageEntries" />
   <table>
     <thead>
@@ -38,25 +38,32 @@
 import { ref } from 'vue'
 import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
+import FilterInputs from '@/components/FilterInputs.vue'
 
 import type { User } from '@/types/user'
 import usersData from '@/data/records.json'
-import { useURLSync } from '@/composables/useURLSync'
+// import { useURLSync } from '@/composables/useURLSync'
 import { useFilter } from '@/composables/useFilter'
 import { usePaginate } from '@/composables/usePaginate'
 import { useSort } from '@/composables/useSort'
+import type { Filters } from '@/types/type'
 
 const users = ref<User[]>([...usersData])
 
+const filters = ref<Filters>({
+  name: '',
+  phone: '',
+  address: '',
+})
+
 // filters
-const { addressFilter, filteredUsers, nameFilter, phoneFilter } = useFilter(users)
+const { filteredUsers } = useFilter(users, filters)
 
 // sorting
 const {
   sortedUsers,
   dateColumnSortDirectionIndicator,
   nameColumnSortDirectionIndicator,
-  columnsSortDirection,
   toggleSort,
 } = useSort(filteredUsers)
 
@@ -71,12 +78,12 @@ const {
 } = usePaginate(sortedUsers)
 
 // url updates
-useURLSync(
-  nameFilter,
-  phoneFilter,
-  addressFilter,
-  currentPage,
-  selectedPageEntries,
-  columnsSortDirection,
-)
+// useURLSync(
+//   nameFilter,
+//   phoneFilter,
+//   addressFilter,
+//   currentPage,
+//   selectedPageEntries,
+//   columnsSortDirection,
+// )
 </script>
