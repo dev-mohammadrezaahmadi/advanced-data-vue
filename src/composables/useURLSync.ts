@@ -6,7 +6,7 @@ import type { Filters, Sort } from '@/types/type'
 export const useURLSync = (
   filters: Ref<Filters>,
   currentPage: Ref<number>,
-  selectedPageEntries: Ref<number>,
+  perPageItemsCount: Ref<number>,
   columnsSortDirection: Ref<Sort>,
 ) => {
   const route = useRoute()
@@ -21,7 +21,7 @@ export const useURLSync = (
         phone: filters.value.phone,
         address: filters.value.address,
         page: currentPage.value,
-        pageCount: selectedPageEntries.value,
+        perPageItems: perPageItemsCount.value,
         sort: JSON.stringify(columnsSortDirection.value),
       },
     })
@@ -32,7 +32,7 @@ export const useURLSync = (
     filters.value.phone = (route.query.phone as string) ?? ''
     filters.value.address = (route.query.address as string) ?? ''
     currentPage.value = Number((route.query.page as string) ?? 1)
-    selectedPageEntries.value = Number((route.query.pageCount as string) ?? ITEMS_PER_PAGE_COUNT)
+    perPageItemsCount.value = Number((route.query.perPageItems as string) ?? ITEMS_PER_PAGE_COUNT)
     columnsSortDirection.value = JSON.parse(
       (route.query.sort as string) ?? JSON.stringify(columnsSortDirection.value),
     )
@@ -41,7 +41,7 @@ export const useURLSync = (
   watch(
     [
       currentPage,
-      selectedPageEntries,
+      perPageItemsCount,
       () => filters.value.name,
       () => filters.value.phone,
       () => filters.value.address,
