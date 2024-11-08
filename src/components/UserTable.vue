@@ -6,7 +6,7 @@
         v-model:address="filters.address"
         v-model:phone="filters.phone"
       />
-      <PageEntriesSelect :options="itemsPerPage" v-model="itemsPerPageCount" />
+      <PerPageItemsField :options="itemsPerPage" v-model="itemsPerPageCount" />
       <TableBody :users="paginatedUsers" :toggle-sort="toggleSort" :sorts="columnsSortDirection" />
       <div class="flex justify-center mt-6">
         <PaginationNavigator
@@ -31,7 +31,7 @@ import type { User } from '@/types/user'
 import type { Filters } from '@/types/type'
 
 // componenets
-import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
+import PerPageItemsField from '@/components/PerPageItemsField.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
 import TableBody from '@/components/TableBody.vue'
 import FilterInputs from '@/components/FilterInputs.vue'
