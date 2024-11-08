@@ -4,7 +4,7 @@
     v-model:address="filters.address"
     v-model:phone="filters.phone"
   />
-  <PageEntriesSelect :options="pageEntriesOptions" v-model="selectedPageEntries" />
+  <PageEntriesSelect :options="itemsPerPage" v-model="itemsPerPageCount" />
   <table>
     <thead>
       <tr>
@@ -35,6 +35,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import usersData from '@/data/records.json'
+
+// constants
+import { ITEMS_PER_PAGE_COUNT, ITEMS_PER_PAGE } from '@/constants/defaults'
 
 // types
 import type { User } from '@/types/user'
@@ -69,15 +72,14 @@ const { date: dateIndicator, name: nameIndicator } = useSortDirectionIndicator(c
 const { sortedUsers } = useSort(filteredUsers, columnsSortDirection)
 
 // paginating
-const {
-  pageEntriesOptions,
-  paginatedUsers,
-  setCurrentPage,
-  totalPages,
-  currentPage,
-  selectedPageEntries,
-} = usePaginate(sortedUsers)
+const currentPage = ref(1)
+const itemsPerPageCount = ref(ITEMS_PER_PAGE_COUNT)
+const itemsPerPage = ref(ITEMS_PER_PAGE)
+const setCurrentPage = (page: number) => {
+  currentPage.value = page
+}
+const { paginatedUsers, totalPages } = usePaginate(sortedUsers, currentPage, itemsPerPageCount)
 
 // url updates
-useURLSync(filters, currentPage, selectedPageEntries, columnsSortDirection)
+useURLSync(filters, currentPage, itemsPerPageCount, columnsSortDirection)
 </script>

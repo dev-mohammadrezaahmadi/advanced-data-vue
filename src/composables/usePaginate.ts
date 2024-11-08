@@ -1,52 +1,22 @@
 import type { User } from '@/types/user'
-import { ref, type Ref, computed } from 'vue'
-import { PAGE_ENTERIES_COUNT } from '@/constants/defaults'
+import { type Ref, computed } from 'vue'
 
-export function usePaginate(users: Ref<User[]>) {
-  const selectedPageEntries = ref(PAGE_ENTERIES_COUNT)
-  const pageEntriesOptions = ref([
-    {
-      text: '5',
-      value: 5,
-    },
-    {
-      text: '10',
-      value: 10,
-    },
-    {
-      text: '15',
-      value: 15,
-    },
-    {
-      text: '20',
-      value: 20,
-    },
-    {
-      text: '50',
-      value: 50,
-    },
-  ])
-
-  const currentPage = ref(1)
+export function usePaginate(
+  users: Ref<User[]>,
+  currentPage: Ref<number>,
+  perPageItems: Ref<number>,
+) {
   const totalPages = computed(() => {
-    return Math.ceil(users.value.length / selectedPageEntries.value)
+    return Math.ceil(users.value.length / perPageItems.value)
   })
   const paginatedUsers = computed(() => {
-    const startIndex = (currentPage.value - 1) * selectedPageEntries.value
-    const endIndex = startIndex + selectedPageEntries.value
+    const startIndex = (currentPage.value - 1) * perPageItems.value
+    const endIndex = startIndex + perPageItems.value
     return users.value.slice(startIndex, endIndex)
   })
-
-  const setCurrentPage = (page: number) => {
-    currentPage.value = page
-  }
 
   return {
     paginatedUsers,
     totalPages,
-    setCurrentPage,
-    pageEntriesOptions,
-    currentPage,
-    selectedPageEntries,
   }
 }

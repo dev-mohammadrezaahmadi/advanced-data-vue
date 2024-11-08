@@ -1,6 +1,6 @@
 import { watch, onMounted, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PAGE_ENTERIES_COUNT } from '@/constants/defaults'
+import { ITEMS_PER_PAGE_COUNT } from '@/constants/defaults'
 import type { Filters, Sort } from '@/types/type'
 
 export const useURLSync = (
@@ -32,7 +32,7 @@ export const useURLSync = (
     filters.value.phone = (route.query.phone as string) ?? ''
     filters.value.address = (route.query.address as string) ?? ''
     currentPage.value = Number((route.query.page as string) ?? 1)
-    selectedPageEntries.value = Number((route.query.pageCount as string) ?? PAGE_ENTERIES_COUNT)
+    selectedPageEntries.value = Number((route.query.pageCount as string) ?? ITEMS_PER_PAGE_COUNT)
     columnsSortDirection.value = JSON.parse(
       (route.query.sort as string) ?? JSON.stringify(columnsSortDirection.value),
     )
