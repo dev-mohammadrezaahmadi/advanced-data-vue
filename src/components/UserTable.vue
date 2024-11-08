@@ -5,26 +5,7 @@
     v-model:phone="filters.phone"
   />
   <PageEntriesSelect :options="itemsPerPage" v-model="itemsPerPageCount" />
-  <table>
-    <thead>
-      <tr>
-        <th>User ID</th>
-        <th @click="toggleSort('name')">Name of the User {{ nameIndicator }}</th>
-        <th @click="toggleSort('date')">Date of Registration {{ dateIndicator }}</th>
-        <th>Address</th>
-        <th>Phone Number</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="user in paginatedUsers" :key="user.id">
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.date }}</td>
-        <td>{{ user.address }}</td>
-        <td>{{ user.phone }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <TableBody :users="paginatedUsers" :toggle-sort="toggleSort" :sorts="columnsSortDirection" />
   <PaginationNavigator
     :current-page="currentPage"
     :total-pages="totalPages"
@@ -46,6 +27,7 @@ import type { Filters } from '@/types/type'
 // componenets
 import PageEntriesSelect from '@/components/PageEntriesSelect.vue'
 import PaginationNavigator from '@/components/PaginationNavigator.vue'
+import TableBody from '@/components/TableBody.vue'
 import FilterInputs from '@/components/FilterInputs.vue'
 
 // composables
@@ -54,7 +36,6 @@ import { useFilter } from '@/composables/useFilter'
 import { usePaginate } from '@/composables/usePaginate'
 import { useSort } from '@/composables/useSort'
 import { useToggleColumnSort } from '@/composables/useToggleColumnSort'
-import { useSortDirectionIndicator } from '@/composables/useSortDirectionIndicator'
 
 const users = ref<User[]>([...usersData])
 
@@ -68,7 +49,6 @@ const { filteredUsers } = useFilter(users, filters)
 
 // sorting
 const { columnsSortDirection, toggleSort } = useToggleColumnSort()
-const { date: dateIndicator, name: nameIndicator } = useSortDirectionIndicator(columnsSortDirection)
 const { sortedUsers } = useSort(filteredUsers, columnsSortDirection)
 
 // paginating

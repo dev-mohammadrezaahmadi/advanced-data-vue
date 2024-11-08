@@ -10,4 +10,14 @@ function sortByName(a: User, b: User, sortDirection: SortDirection) {
   return a.name.localeCompare(b.name) * (sortDirection === 'asc' ? 1 : -1)
 }
 
-export { sortByDate, sortByName }
+function getSortDirectionIndicator(direction: SortDirection) {
+  if (direction === 'asc') {
+    return '↑'
+  } else if (direction === 'desc') {
+    return '↓'
+  } else {
+    return null
+  }
+}
+
+export { sortByDate, sortByName, getSortDirectionIndicator }
