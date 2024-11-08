@@ -20,19 +20,21 @@
 
     <!-- Middle pages with slide and fade transitions -->
     <TransitionGroup name="slide-fade" tag="div" class="flex items-center">
-      <button
-        v-for="page in visiblePages"
-        :key="page"
-        class="px-3 py-1 mx-1 rounded text-sm min-w-[32px] transform transition-all duration-200 ease-in-out"
-        :class="[
-          currentPage === page
-            ? 'bg-blue-600 text-white scale-110'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105',
-        ]"
-        @click="onPageClick(page)"
-      >
-        {{ page }}
-      </button>
+      <template v-for="page in visiblePages">
+        <button
+          v-if="page !== 1 && page !== totalPages"
+          :key="page"
+          class="px-3 py-1 mx-1 rounded text-sm min-w-[32px] transform transition-all duration-200 ease-in-out"
+          :class="[
+            currentPage === page
+              ? 'bg-blue-600 text-white scale-110'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105',
+          ]"
+          @click="onPageClick(page)"
+        >
+          {{ page }}
+        </button>
+      </template>
     </TransitionGroup>
 
     <!-- Right dots with fade transition -->
