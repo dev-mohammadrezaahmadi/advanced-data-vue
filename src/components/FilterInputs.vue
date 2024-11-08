@@ -21,7 +21,7 @@
       <input
         type="text"
         placeholder="Search by name..."
-        v-model="name"
+        v-model.trim="name"
         class="w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
       />
     </div>
@@ -47,7 +47,7 @@
       <input
         type="text"
         placeholder="Search by phone..."
-        v-model="phone"
+        v-model.trim="phone"
         class="w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
       />
     </div>
@@ -79,7 +79,7 @@
       <input
         type="text"
         placeholder="Search by address..."
-        v-model="address"
+        v-model.trim="address"
         class="w-full pl-10 pr-4 py-2 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
       />
     </div>
