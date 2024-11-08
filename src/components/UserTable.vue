@@ -1,18 +1,20 @@
 <template>
-  <div class="px-4">
-    <FilterInputs
-      v-model:name="filters.name"
-      v-model:address="filters.address"
-      v-model:phone="filters.phone"
-    />
-    <PageEntriesSelect :options="itemsPerPage" v-model="itemsPerPageCount" />
-    <TableBody :users="paginatedUsers" :toggle-sort="toggleSort" :sorts="columnsSortDirection" />
-    <div class="flex justify-center p-6">
-      <PaginationNavigator
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        @on-paginate-click="setCurrentPage"
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <FilterInputs
+        v-model:name="filters.name"
+        v-model:address="filters.address"
+        v-model:phone="filters.phone"
       />
+      <PageEntriesSelect :options="itemsPerPage" v-model="itemsPerPageCount" />
+      <TableBody :users="paginatedUsers" :toggle-sort="toggleSort" :sorts="columnsSortDirection" />
+      <div class="flex justify-center mt-6">
+        <PaginationNavigator
+          :current-page="currentPage"
+          :total-pages="totalPages"
+          @on-paginate-click="setCurrentPage"
+        />
+      </div>
     </div>
   </div>
 </template>
